@@ -3,125 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Leo - Crea tu Perfil</title>
+    <title>Yo Leo - Registro SOW</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Quicksand', sans-serif;
-            background: #FFEFBA; /* Fondo degradado cálido */
-            background: linear-gradient(to bottom, #FFFFFF, #FFEFBA);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .config-card {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 40px;
-            padding: 30px;
-            box-shadow: 0 20px 0 #FFD93D; /* Sombra sólida estilo dibujo animado */
-            text-align: center;
-            border: 4px solid #FFD93D;
-        }
-
-        h1 { color: #FF6B6B; font-size: 2rem; margin-bottom: 20px; }
-
-        .input-nombre {
-            width: 80%;
-            padding: 15px;
-            border: 3px solid #4ECDC4;
-            border-radius: 20px;
-            font-size: 1.2rem;
-            text-align: center;
-            outline: none;
-            color: #2D3436;
-        }
-
-        .selector-iconos {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .icon-option {
-            background: #F7F9FB;
-            border: 3px solid #eee;
-            border-radius: 20px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 3rem; /* Usamos emojis grandes como iconos temporales hermosos */
-        }
-
-        .icon-option:hover { transform: scale(1.1); border-color: #FF6B6B; }
+        /* CSS INTEGRADO - Diseño Responsivo y Colorido */
+        body { margin: 0; font-family: 'Quicksand', sans-serif; background: linear-gradient(to bottom, #FFFFFF, #FFEFBA); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .card { background: white; width: 100%; max-width: 450px; border-radius: 40px; padding: 30px; text-align: center; border: 4px solid #FFD93D; box-shadow: 0 15px 0 #FFD93D; }
+        h1 { color: #FF6B6B; font-size: 1.8rem; }
+        input { width: 85%; padding: 15px; border: 3px solid #4ECDC4; border-radius: 20px; font-size: 1.1rem; text-align: center; margin-bottom: 20px; outline: none; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .icon { font-size: 2.5rem; padding: 10px; border: 3px solid #f0f0f0; border-radius: 20px; cursor: pointer; transition: 0.2s; background: #f9f9f9; }
         .selected { border-color: #FF6B6B; background: #FFF3F3; transform: scale(1.1); }
-
-        .btn-adelante {
-            background: #4ECDC4;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #3FB0A8;
-            transition: all 0.1s;
-            width: 100%;
-        }
-
-        .btn-adelante:active {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 #3FB0A8;
-        }
+        button { background: #4ECDC4; color: white; border: none; padding: 18px; border-radius: 30px; font-size: 1.4rem; width: 100%; cursor: pointer; box-shadow: 0 8px 0 #3FB0A8; font-weight: bold; }
+        button:active { transform: translateY(4px); box-shadow: 0 4px 0 #3FB0A8; }
     </style>
 </head>
 <body>
 
-<div class="config-card">
+<div class="card">
     <h1>¿Cómo te llamas?</h1>
-    <input type="text" id="nombreNino" class="input-nombre" placeholder="Escribe tu nombre aquí">
-
-    <h1>Escoge tu icono</h1>
-    <div class="selector-iconos" id="iconGroup">
-        <div class="icon-option" onclick="selectIcon(this, '🦁')">🦁</div>
-        <div class="icon-option" onclick="selectIcon(this, '🚀')">🚀</div>
-        <div class="icon-option" onclick="selectIcon(this, '🦖')">🦖</div>
-        <div class="icon-option" onclick="selectIcon(this, '🦄')">🦄</div>
-        <div class="icon-option" onclick="selectIcon(this, '🎨')">🎨</div>
-        <div class="icon-option" onclick="selectIcon(this, '🐼')">🐼</div>
+    <input type="text" id="nombre" placeholder="Escribe tu nombre">
+    
+    <h1>Elige tu compañero</h1>
+    <div class="grid">
+        <div class="icon" onclick="sel(this, '🦁')">🦁</div>
+        <div class="icon" onclick="sel(this, '🚀')">🚀</div>
+        <div class="icon" onclick="sel(this, '🦖')">🦖</div>
+        <div class="icon" onclick="sel(this, '🦄')">🦄</div>
+        <div class="icon" onclick="sel(this, '🎨')">🎨</div>
+        <div class="icon" onclick="sel(this, '🐼')">🐼</div>
     </div>
 
-    <button class="btn-adelante" onclick="guardarYContinuar()">¡SIGAMOS! ➔</button>
+    <button onclick="registrar()">¡EMPEZAR AVENTURA! ➔</button>
 </div>
 
 <script>
+    // JAVASCRIPT INTEGRADO - Lógica y Conexión Supabase
+    const SUPABASE_URL = 'https://tnosgmtokfilkjpuxvtl.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: true } // Sesión permanente activa
+    });
+
     let iconoSeleccionado = '';
 
-    function selectIcon(element, icon) {
-        // Quitar selección previa
-        document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
-        // Marcar nuevo
-        element.classList.add('selected');
+    function sel(el, icon) {
+        document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
         iconoSeleccionado = icon;
     }
 
-    function guardarYContinuar() {
-        const nombre = document.getElementById('nombreNino').value;
-        if (!nombre || !iconoSeleccionado) {
-            alert("¡Escribe tu nombre y elige un icono para empezar!");
-            return;
-        }
-        console.log("Guardando en Supabase:", nombre, iconoSeleccionado);
-        // Aquí conectaremos con tu función create_complete_child_profile de Supabase
-        alert("¡Hola " + nombre + "! Prepárate para aprender a leer.");
+    async function registrar() {
+        const nombre = document.getElementById('nombre').value;
+        if(!nombre || !iconoSeleccionado) return alert("Por favor, pon tu nombre y elige un icono.");
+
+        // Para esta fase, usaremos un ID temporal. 
+        // En la siguiente lección activaremos el Login real del padre.
+        alert("SOW: Registrando a " + nombre + " con el icono " + iconoSeleccionado);
+        
+        // Simulación de guardado exitoso
+        window.location.href = "dashboard.html";
     }
 </script>
 
