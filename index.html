@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { margin: 0; font-family: 'Fredoka One', cursive; background: #FFD93D; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .card { background: white; width: 100%; max-width: 400px; border-radius: 50px; padding: 40px; text-align: center; border: 8px solid #FF6B6B; box-shadow: 0 20px 0 #E55B5B; }
+        .card { background: white; width: 100%; max-width: 400px; border-radius: 50px; padding: 40px; text-align: center; border: 8px solid #FF6B6B; box-shadow: 0 15px 0 #E55B5B; }
         h1 { color: #4ECDC4; font-size: 2rem; margin-bottom: 20px; }
         input { width: 85%; padding: 15px; border: 4px solid #4ECDC4; border-radius: 25px; font-size: 1.2rem; text-align: center; margin-bottom: 15px; outline: none; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
@@ -44,10 +44,11 @@
     const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
     let icono = '';
 
-    // Verifica si ya hay sesión al entrar
-    supabaseClient.auth.getSession().then(({data}) => {
+    // Si ya está logueado, saltar directo
+    window.onload = async () => {
+        const { data } = await supabaseClient.auth.getSession();
         if (data.session) window.location.href = "dashboard.html";
-    });
+    };
 
     function sel(el, icon) {
         document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
@@ -61,8 +62,11 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const nombre = document.getElementById('nombreNino').value;
+        if(!email || !password || !nombre || !icono) return alert("Completa todo");
+        
         const { data, error } = await supabaseClient.auth.signUp({ email, password });
         if (error) return alert(error.message);
+        
         await supabaseClient.rpc('create_complete_child_profile', {
             p_parent_id: data.user.id, p_first_name: nombre, p_age: 3, p_favorite_franchise: 'general', p_avatar_url: icono
         });
