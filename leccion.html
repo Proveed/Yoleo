@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Leo - ¡A jugar!</title>
+    <title>Yo Leo - Voz Activa</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { margin: 0; font-family: 'Quicksand', sans-serif; background: #FF6B6B; color: white; text-align: center; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-        .pregunta { font-size: 2.5rem; margin-bottom: 40px; padding: 0 20px; }
-        .opciones { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .tecla { background: white; color: #FF6B6B; width: 120px; height: 120px; border-radius: 30px; font-size: 4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 0 #E2E8F0; transition: 0.1s; border: none; }
-        .tecla:active { transform: translateY(8px); box-shadow: 0 2px 0 #E2E8F0; }
-        .feedback { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 5rem; z-index: 10; background: rgba(0,0,0,0.5); }
+        .pregunta { font-size: 2.5rem; margin-bottom: 40px; }
+        .opciones { display: flex; justify-content: center; gap: 20px; }
+        .tecla { background: white; color: #FF6B6B; width: 120px; height: 120px; border-radius: 30px; font-size: 4rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 0 #E55B5B; border: none; font-weight: bold; }
+        #feedback { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 5rem; z-index: 10; background: rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
 
 <div id="game">
-    <div class="pregunta">¿Cuál es la letra <br><strong>A</strong>?</div>
-    
+    <div class="pregunta">Toca la letra <br><strong style="font-size: 5rem;">A</strong></div>
     <div class="opciones">
         <button class="tecla" onclick="verificar('E')">E</button>
         <button class="tecla" onclick="verificar('A')">A</button>
@@ -27,22 +25,49 @@
     </div>
 </div>
 
-<div id="feedback" class="feedback"></div>
+<div id="feedback"></div>
 
 <script>
-    function verificar(letra) {
+    const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
+
+    // FUNCIÓN DE VOZ: El celular habla
+    function hablar(texto) {
+        const mensaje = new SpeechSynthesisUtterance(texto);
+        mensaje.lang = 'es-ES'; // Español
+        mensaje.rate = 0.9;     // Velocidad un poco lenta para que el niño entienda
+        window.speechSynthesis.speak(mensaje);
+    }
+
+    // Al cargar, dar la instrucción
+    window.onload = () => {
+        setTimeout(() => hablar("Toca la letra A"), 500);
+    };
+
+    async function verificar(letra) {
+        hablar(letra); // Primero dice la letra que tocó el niño
+        
         const f = document.getElementById('feedback');
-        f.style.display = 'flex';
         
         if(letra === 'A') {
-            f.innerHTML = "🌟 ¡SÍ! 🌟";
-            f.style.color = "#4ECDC4";
-            setTimeout(() => window.location.href = 'dashboard.html', 2000);
-            // Aquí sumaremos 10 segundos a la bóveda en Supabase
+            setTimeout(() => {
+                f.style.display = 'flex';
+                f.innerHTML = "🌟 ¡SÍ! 🌟";
+                f.style.color = "#4ECDC4";
+                hablar("¡Excelente! Ganaste tiempo para tus videos.");
+            }, 500);
+            
+            // Lógica de Supabase para guardar tiempo
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                const { data: nino } = await supabaseClient.from('children_profiles').select('id').eq('parent_id', user.id).single();
+                if (nino) {
+                    await supabaseClient.rpc('add_video_time', { p_child_id: nino.id, p_seconds: 20 });
+                }
+            }
+
+            setTimeout(() => window.location.href = 'dashboard.html', 3500);
         } else {
-            f.innerHTML = "❌ ¡Casi! ❌";
-            f.style.color = "#FF6B6B";
-            setTimeout(() => f.style.display = 'none', 1000);
+            setTimeout(() => hablar("Esa es la " + letra + ". Intenta otra vez"), 500);
         }
     }
 </script>
