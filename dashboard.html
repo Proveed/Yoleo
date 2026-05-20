@@ -3,64 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOW - Panel de Control</title>
+    <title>Yo Leo - Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { margin: 0; font-family: 'Quicksand', sans-serif; background: #F0F4F8; color: #2D3436; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .card { background: white; border-radius: 30px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 2px solid #E2E8F0; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .stat-box { background: #F8FAFC; padding: 15px; border-radius: 20px; text-align: center; }
-        .stat-val { font-size: 1.8rem; color: #4ECDC4; display: block; }
-        .btn-play { background: #FF6B6B; color: white; border: none; padding: 25px; border-radius: 40px; font-size: 1.8rem; width: 100%; cursor: pointer; box-shadow: 0 10px 0 #E55B5B; font-weight: bold; margin-top: 20px; }
+        body { margin: 0; font-family: 'Quicksand', sans-serif; background: #F0F4F8; padding: 20px; text-align: center; }
+        .card { background: white; border-radius: 30px; padding: 25px; max-width: 500px; margin: 20px auto; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .btn-play { background: #FF6B6B; color: white; border: none; padding: 25px; border-radius: 40px; font-size: 1.8rem; width: 100%; max-width: 400px; cursor: pointer; box-shadow: 0 10px 0 #E55B5B; font-weight: bold; }
         .btn-play:active { transform: translateY(4px); box-shadow: 0 4px 0 #E55B5B; }
-        .progress-bar { width: 100%; background: #EDF2F7; height: 20px; border-radius: 10px; margin-top: 10px; overflow: hidden; }
-        .progress-fill { background: #4ECDC4; height: 100%; width: 5%; } /* Ejemplo: 5% de avance */
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header">
-        <h2 id="welcomeText">¡Hola! 👋</h2>
-        <div id="avatarDisplay" style="font-size: 2.5rem;">🦁</div>
-    </div>
-
     <div class="card">
-        <h3>Récord: Día 1 de 180</h3>
-        <p>Camino a la lectura fluida (6 meses)</p>
-        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <h2 id="welcome">¡Hola! 👋</h2>
+        <div id="avatar" style="font-size: 4rem; margin: 20px 0;">🦁</div>
+        <button class="btn-play" onclick="activarYJugar()">🎯 JUGAR AHORA</button>
     </div>
-
-    <div class="stats-grid">
-        <div class="stat-box">
-            <span class="stat-val" id="minutosBoveda">00:00</span>
-            <span>Premios Video</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-val">0</span>
-            <span>Fonemas Listos</span>
-        </div>
-    </div>
-
-    <button class="btn-play" onclick="window.location.href='leccion.html'">🎯 JUGAR AHORA</button>
-</div>
-
 <script>
     const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
-    
-    // Aquí cargaremos los datos reales de Supabase al iniciar
-    async function cargarDatos() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-            // Lógica para traer nombre y progreso
-            console.log("Cargando datos para:", user.id);
+    async function init() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) window.location.href = "index.html";
+        const { data } = await supabaseClient.from('children_profiles').select('*').eq('parent_id', session.user.id).single();
+        if (data) {
+            document.getElementById('welcome').innerText = `¡Hola, ${data.first_name}!`;
+            document.getElementById('avatar').innerText = data.avatar_url;
         }
     }
-    cargarDatos();
+    function activarYJugar() {
+        const msj = new SpeechSynthesisUtterance("");
+        window.speechSynthesis.speak(msj);
+        window.location.href = 'leccion.html';
+    }
+    init();
 </script>
-
 </body>
 </html>
