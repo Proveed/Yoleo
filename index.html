@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yo Leo - Selección de Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #4CC9F0;
+            --soft-bg: #F0F9FF;
+            --text-color: #2B2D42;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--soft-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 800px; /* Tamaño máximo para tablets/PC */
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-color);
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* Tamaño de texto adaptable */
+            margin-bottom: 40px;
+        }
+
+        /* Contenedor responsivo que cambia de columnas según el ancho */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 25px;
+            justify-items: center;
+        }
+
+        .profile-item {
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-item:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-frame {
+            width: clamp(100px, 20vw, 150px);
+            height: clamp(100px, 20vw, 150px);
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            background: white;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .child-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        /* Ajustes para móviles muy pequeños */
+        @media (max-width: 480px) {
+            .profiles-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 perfiles por fila en móviles */
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell">
+        <h1>¿Quién va a leer hoy?</h1>
+
+        <div class="profiles-grid">
+            <div class="profile-item">
+                <div class="avatar-frame">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Mateo" alt="Mateo">
+                </div>
+                <div class="child-name">Mateo</div>
+            </div>
+
+            <div class="profile-item">
+                <div class="avatar-frame">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Maya" alt="Maya">
+                </div>
+                <div class="child-name">Maya</div>
+            </div>
+
+            <div class="profile-item">
+                <div class="avatar-frame" style="border: 4px dashed #CBD5E0; background: transparent; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #CBD5E0;">
+                    +
+                </div>
+                <div class="child-name" style="color: #A0AEC0;">Nuevo</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
