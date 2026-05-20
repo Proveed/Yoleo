@@ -3,117 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Leo - Selección de Perfil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <title>Yo Leo - Crea tu Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-blue: #4CC9F0;
-            --soft-bg: #F0F9FF;
-            --text-color: #2B2D42;
-        }
-
         body {
             margin: 0;
             font-family: 'Quicksand', sans-serif;
-            background-color: var(--soft-bg);
+            background: #FFEFBA; /* Fondo degradado cálido */
+            background: linear-gradient(to bottom, #FFFFFF, #FFEFBA);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .app-shell {
-            width: 100%;
-            max-width: 800px; /* Tamaño máximo para tablets/PC */
             padding: 20px;
-            text-align: center;
         }
 
-        h1 {
-            color: var(--text-color);
-            font-size: clamp(1.8rem, 5vw, 2.5rem); /* Tamaño de texto adaptable */
-            margin-bottom: 40px;
-        }
-
-        /* Contenedor responsivo que cambia de columnas según el ancho */
-        .profiles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 25px;
-            justify-items: center;
-        }
-
-        .profile-item {
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .profile-item:hover {
-            transform: scale(1.1);
-        }
-
-        .avatar-frame {
-            width: clamp(100px, 20vw, 150px);
-            height: clamp(100px, 20vw, 150px);
-            border-radius: 50%;
-            border: 6px solid white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        .config-card {
             background: white;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .avatar-frame img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 500px;
+            border-radius: 40px;
+            padding: 30px;
+            box-shadow: 0 20px 0 #FFD93D; /* Sombra sólida estilo dibujo animado */
+            text-align: center;
+            border: 4px solid #FFD93D;
         }
 
-        .child-name {
-            font-weight: 700;
+        h1 { color: #FF6B6B; font-size: 2rem; margin-bottom: 20px; }
+
+        .input-nombre {
+            width: 80%;
+            padding: 15px;
+            border: 3px solid #4ECDC4;
+            border-radius: 20px;
             font-size: 1.2rem;
-            color: var(--text-color);
+            text-align: center;
+            outline: none;
+            color: #2D3436;
         }
 
-        /* Ajustes para móviles muy pequeños */
-        @media (max-width: 480px) {
-            .profiles-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 perfiles por fila en móviles */
-                gap: 15px;
-            }
+        .selector-iconos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .icon-option {
+            background: #F7F9FB;
+            border: 3px solid #eee;
+            border-radius: 20px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 3rem; /* Usamos emojis grandes como iconos temporales hermosos */
+        }
+
+        .icon-option:hover { transform: scale(1.1); border-color: #FF6B6B; }
+        .selected { border-color: #FF6B6B; background: #FFF3F3; transform: scale(1.1); }
+
+        .btn-adelante {
+            background: #4ECDC4;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #3FB0A8;
+            transition: all 0.1s;
+            width: 100%;
+        }
+
+        .btn-adelante:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #3FB0A8;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-shell">
-        <h1>¿Quién va a leer hoy?</h1>
+<div class="config-card">
+    <h1>¿Cómo te llamas?</h1>
+    <input type="text" id="nombreNino" class="input-nombre" placeholder="Escribe tu nombre aquí">
 
-        <div class="profiles-grid">
-            <div class="profile-item">
-                <div class="avatar-frame">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Mateo" alt="Mateo">
-                </div>
-                <div class="child-name">Mateo</div>
-            </div>
-
-            <div class="profile-item">
-                <div class="avatar-frame">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Maya" alt="Maya">
-                </div>
-                <div class="child-name">Maya</div>
-            </div>
-
-            <div class="profile-item">
-                <div class="avatar-frame" style="border: 4px dashed #CBD5E0; background: transparent; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #CBD5E0;">
-                    +
-                </div>
-                <div class="child-name" style="color: #A0AEC0;">Nuevo</div>
-            </div>
-        </div>
+    <h1>Escoge tu icono</h1>
+    <div class="selector-iconos" id="iconGroup">
+        <div class="icon-option" onclick="selectIcon(this, '🦁')">🦁</div>
+        <div class="icon-option" onclick="selectIcon(this, '🚀')">🚀</div>
+        <div class="icon-option" onclick="selectIcon(this, '🦖')">🦖</div>
+        <div class="icon-option" onclick="selectIcon(this, '🦄')">🦄</div>
+        <div class="icon-option" onclick="selectIcon(this, '🎨')">🎨</div>
+        <div class="icon-option" onclick="selectIcon(this, '🐼')">🐼</div>
     </div>
+
+    <button class="btn-adelante" onclick="guardarYContinuar()">¡SIGAMOS! ➔</button>
+</div>
+
+<script>
+    let iconoSeleccionado = '';
+
+    function selectIcon(element, icon) {
+        // Quitar selección previa
+        document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+        // Marcar nuevo
+        element.classList.add('selected');
+        iconoSeleccionado = icon;
+    }
+
+    function guardarYContinuar() {
+        const nombre = document.getElementById('nombreNino').value;
+        if (!nombre || !iconoSeleccionado) {
+            alert("¡Escribe tu nombre y elige un icono para empezar!");
+            return;
+        }
+        console.log("Guardando en Supabase:", nombre, iconoSeleccionado);
+        // Aquí conectaremos con tu función create_complete_child_profile de Supabase
+        alert("¡Hola " + nombre + "! Prepárate para aprender a leer.");
+    }
+</script>
 
 </body>
 </html>
