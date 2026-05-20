@@ -1,36 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Leo - Registro SOW</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>SOW - Registro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { margin: 0; font-family: 'Quicksand', sans-serif; background: linear-gradient(to bottom, #FFFFFF, #FFEFBA); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .card { background: white; width: 100%; max-width: 450px; border-radius: 40px; padding: 30px; text-align: center; border: 4px solid #FFD93D; box-shadow: 0 15px 0 #FFD93D; }
-        h1 { color: #FF6B6B; font-size: 1.5rem; margin-bottom: 10px; }
-        input { width: 90%; padding: 12px; border: 3px solid #4ECDC4; border-radius: 15px; font-size: 1rem; text-align: center; margin-bottom: 10px; outline: none; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .icon { font-size: 2rem; padding: 8px; border: 3px solid #f0f0f0; border-radius: 15px; cursor: pointer; transition: 0.2s; background: #f9f9f9; }
-        .selected { border-color: #FF6B6B; background: #FFF3F3; transform: scale(1.1); }
-        button { background: #4ECDC4; color: white; border: none; padding: 18px; border-radius: 30px; font-size: 1.4rem; width: 100%; cursor: pointer; box-shadow: 0 8px 0 #3FB0A8; font-weight: bold; margin-top: 10px; }
+        body { margin: 0; font-family: 'Fredoka One', cursive; background: #FFD93D; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .card { background: white; width: 100%; max-width: 400px; border-radius: 50px; padding: 40px; text-align: center; border: 8px solid #FF6B6B; box-shadow: 0 20px 0 #E55B5B; }
+        h1 { color: #4ECDC4; font-size: 2rem; margin-bottom: 20px; }
+        input { width: 85%; padding: 15px; border: 4px solid #4ECDC4; border-radius: 25px; font-size: 1.2rem; text-align: center; margin-bottom: 15px; outline: none; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .icon { font-size: 3rem; padding: 10px; border: 4px solid #f0f0f0; border-radius: 25px; cursor: pointer; background: #f9f9f9; }
+        .selected { border-color: #FF6B6B; background: #FFEAEA; transform: scale(1.1) rotate(5deg); }
+        button { background: #FF6B6B; color: white; border: none; padding: 20px; border-radius: 40px; font-size: 1.5rem; width: 100%; cursor: pointer; box-shadow: 0 10px 0 #E55B5B; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-
-<div class="card">
+<div class="card" id="mainCard" style="display:none;">
     <div id="step1">
-        <h1>Cuenta del Padre</h1>
-        <input type="email" id="email" placeholder="Correo electrónico">
-        <input type="password" id="password" placeholder="Contraseña segura">
+        <h1>¡Hola Papá!</h1>
+        <input type="email" id="email" placeholder="Tu Correo">
+        <input type="password" id="password" placeholder="Tu Contraseña">
         <button onclick="siguiente()">SIGUIENTE ➔</button>
     </div>
-
     <div id="step2" class="hidden">
-        <h1>Perfil del Niño</h1>
-        <input type="text" id="nombreNino" placeholder="Nombre del niño">
+        <h1>¿Quién eres?</h1>
+        <input type="text" id="nombreNino" placeholder="Nombre del Peque">
         <div class="grid">
             <div class="icon" onclick="sel(this, '🦁')">🦁</div>
             <div class="icon" onclick="sel(this, '🚀')">🚀</div>
@@ -39,13 +38,24 @@
             <div class="icon" onclick="sel(this, '🎨')">🎨</div>
             <div class="icon" onclick="sel(this, '🐼')">🐼</div>
         </div>
-        <button onclick="finalizarRegistro()">¡LISTO PARA LEER! ➔</button>
+        <button onclick="finalizarRegistro()">¡A JUGAR! ➔</button>
     </div>
 </div>
-
 <script>
-    const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
+    const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR', {
+        auth: { persistSession: true, autoRefreshToken: true }
+    });
+
     let icono = '';
+
+    async function chequearSesion() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            window.location.href = "dashboard.html";
+        } else {
+            document.getElementById('mainCard').style.display = 'block';
+        }
+    }
 
     function sel(el, icon) {
         document.querySelectorAll('.icon').forEach(i => i.classList.remove('selected'));
@@ -63,40 +73,15 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const nombre = document.getElementById('nombreNino').value;
-
-        if(!nombre || !icono) return alert("Elige nombre e icono");
-
-        // 1. Crear Usuario en Supabase Auth
-        const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-            email: email,
-            password: password,
+        const { data: authData, error: authError } = await supabaseClient.auth.signUp({ email, password });
+        if(authError) return alert(authError.message);
+        await supabaseClient.rpc('create_complete_child_profile', {
+            p_parent_id: authData.user.id, p_first_name: nombre, p_age: 3, p_favorite_franchise: 'general', p_avatar_url: icono
         });
-
-        if(authError) return alert("Error Auth: " + authError.message);
-
-        const userId = authData.user.id;
-
-        // 2. Registrar Dispositivo (Control de 5)
-        await supabaseClient.from('user_devices').insert([{ user_id: userId, device_info: navigator.userAgent, is_master: true }]);
-
-        // 3. Crear Perfil del Niño usando la función RPC que ya está en tu SQL
-        const { error: rpcError } = await supabaseClient.rpc('create_complete_child_profile', {
-            p_first_name: nombre,
-            p_age: 3,
-            p_favorite_franchise: 'paw_patrol',
-            p_avatar_url: icono,
-            p_parent_id: userId
-        });
-
-        if(rpcError) {
-            console.error(rpcError);
-            alert("Error al crear perfil del niño");
-        } else {
-            alert("¡Registro exitoso, Luis Alejandro!");
-            window.location.href = "dashboard.html";
-        }
+        window.location.href = "dashboard.html";
     }
-</script>
 
+    chequearSesion();
+</script>
 </body>
 </html>
