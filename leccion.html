@@ -3,62 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Leo - Juego</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>SOW - ¡Diversión!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { margin: 0; font-family: 'Quicksand', sans-serif; background: #FF6B6B; color: white; text-align: center; height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .letra-objetivo { font-size: 8rem; color: #FFD93D; margin: 20px 0; }
-        .opciones { display: flex; justify-content: center; gap: 20px; }
-        .tecla { background: white; color: #FF6B6B; width: 110px; height: 110px; border-radius: 30px; font-size: 4rem; border: none; cursor: pointer; box-shadow: 0 10px 0 #E55B5B; font-weight: bold; }
-        #animacion { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 5rem; background: rgba(78, 205, 196, 0.95); z-index: 10; }
+        body { margin: 0; font-family: 'Fredoka One', cursive; background: #FF6B6B; color: white; text-align: center; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .instruccion { font-size: 2.5rem; text-shadow: 4px 4px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .letra-grande { font-size: 10rem; color: #FFD93D; text-shadow: 8px 8px 0 #E55B5B; margin: 10px 0; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .opciones { display: flex; justify-content: center; gap: 20px; padding: 20px; }
+        .tecla { background: white; color: #FF6B6B; width: 130px; height: 130px; border-radius: 40px; font-size: 5rem; border: none; cursor: pointer; box-shadow: 0 15px 0 #E2E8F0; transition: 0.1s; }
+        .tecla:hover { transform: translateY(-10px); }
+        .tecla:active { transform: translateY(10px); box-shadow: 0 5px 0 #E2E8F0; }
+        #efecto { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; font-size: 8rem; background: rgba(78, 205, 196, 0.9); z-index: 100; animation: zoomIn 0.5s; }
+        @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div id="game">
-        <div style="font-size: 2rem;">Toca la letra:</div>
-        <div class="letra-objetivo" id="letraTxt">A</div>
-        <div class="opciones" id="btns"></div>
+    <div id="juego">
+        <div class="instruccion">¿Dónde está la...</div>
+        <div class="letra-grande" id="objTxt">A</div>
+        <div class="opciones" id="botones"></div>
     </div>
-    <div id="animacion">🌟 ¡BIEN! 🌟</div>
+    <div id="efecto">🌟 ¡SÍ! 🌟</div>
+
 <script>
     const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
     const niveles = [
-        { obj: 'A', ops: ['E', 'A', 'O'] },
-        { obj: 'E', ops: ['E', 'I', 'U'] },
-        { obj: 'I', ops: ['A', 'I', 'O'] },
-        { obj: 'O', ops: ['O', 'U', 'E'] },
-        { obj: 'U', ops: ['A', 'E', 'U'] }
+        { obj: 'A', ops: ['E', 'A', 'O'], audio: "¡Busca la letra A!" },
+        { obj: 'E', ops: ['E', 'I', 'U'], audio: "¡Genial! Ahora la letra E" },
+        { obj: 'I', ops: ['A', 'I', 'O'], audio: "¡Eso es! Vamos por la I" },
+        { obj: 'O', ops: ['O', 'U', 'E'], audio: "¡Súper! Encuentra la O" },
+        { obj: 'U', ops: ['A', 'E', 'U'], audio: "¡La última! ¿Dónde está la U?" }
     ];
     let actual = 0;
-    function hablar(t) {
+
+    function hablar(t, tonoInfantil = true) {
         window.speechSynthesis.cancel();
         const m = new SpeechSynthesisUtterance(t);
-        m.lang = 'es-MX'; m.rate = 0.8; window.speechSynthesis.speak(m);
+        m.lang = 'es-MX';
+        m.pitch = tonoInfantil ? 1.5 : 1.0; // Pitch alto para que suene como niño/dibujo animado
+        m.rate = 0.9;
+        window.speechSynthesis.speak(m);
     }
+
     function cargar() {
         const n = niveles[actual];
-        document.getElementById('letraTxt').innerText = n.obj;
-        const b = document.getElementById('btns');
+        document.getElementById('objTxt').innerText = n.obj;
+        const b = document.getElementById('botones');
         b.innerHTML = '';
         n.ops.forEach(l => {
             const btn = document.createElement('button');
             btn.className = 'tecla'; btn.innerText = l;
             btn.onclick = () => validar(l); b.appendChild(btn);
         });
-        hablar("Toca la letra " + n.obj);
+        hablar(n.audio);
     }
+
     async function validar(l) {
         if(l === niveles[actual].obj) {
-            document.getElementById('animacion').style.display = 'flex';
-            hablar("¡Excelente! Esa es la " + l);
+            document.getElementById('efecto').style.display = 'flex';
+            hablar("¡Increíble! ¡Lo hiciste muy bien!");
+            
             setTimeout(() => {
-                document.getElementById('animacion').style.display = 'none';
+                document.getElementById('efecto').style.display = 'none';
                 actual++;
-                if(actual < niveles.length) cargar(); 
-                else { hablar("¡Terminaste! Muy bien."); setTimeout(()=> window.location.href='dashboard.html', 2000); }
-            }, 1500);
-        } else { hablar("No, esa es la " + l + ". Busca la " + niveles[actual].obj); }
+                if(actual < niveles.length) cargar();
+                else { 
+                    hablar("¡Eres un campeón! Ganaste mucho tiempo de video.");
+                    setTimeout(() => window.location.href = 'dashboard.html', 3000); 
+                }
+            }, 2000);
+        } else {
+            hablar("¡O oh! Esa es la " + l + ". ¡Intenta otra vez!");
+            // Sacudir la pantalla
+            document.body.style.transform = "translateX(10px)";
+            setTimeout(()=> document.body.style.transform = "translateX(0)", 100);
+        }
     }
     window.onload = cargar;
 </script>
