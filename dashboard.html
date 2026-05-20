@@ -8,38 +8,38 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { margin: 0; font-family: 'Fredoka One', cursive; background: #F0F4F8; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: auto; }
-        .card { background: white; border-radius: 50px; padding: 30px; border: 6px solid #4ECDC4; box-shadow: 0 15px 0 #3FB0A8; margin-top: 50px; }
-        #avatar { font-size: 6rem; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        .btn-play { background: #FF6B6B; color: white; border: none; padding: 30px; border-radius: 50px; font-size: 2.2rem; width: 100%; cursor: pointer; box-shadow: 0 12px 0 #E55B5B; font-weight: bold; margin-top: 30px; }
-        .btn-play:hover { background: #ff8585; transform: scale(1.02); }
+        .card { background: white; border-radius: 50px; padding: 30px; border: 6px solid #4ECDC4; box-shadow: 0 15px 0 #3FB0A8; max-width: 450px; margin: 40px auto; }
+        #avatar { font-size: 6rem; margin: 20px 0; }
+        .btn-play { background: #FF6B6B; color: white; border: none; padding: 30px; border-radius: 50px; font-size: 2rem; width: 100%; cursor: pointer; box-shadow: 0 12px 0 #E55B5B; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="content" style="display:none;">
         <div class="card">
-            <h2 id="welcome" style="color: #4ECDC4; font-size: 2rem;">¡Hola! 👋</h2>
+            <h2 id="welcome" style="color: #4ECDC4;">¡Hola!</h2>
             <div id="avatar">🦁</div>
-            <button class="btn-play" onclick="activarYJugar()">🎯 ¡JUGAR!</button>
+            <button class="btn-play" onclick="window.location.href='leccion.html'">🎯 ¡JUGAR!</button>
         </div>
     </div>
 <script>
-    const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR');
-    async function init() {
+    const supabaseClient = supabase.createClient('https://tnosgmtokfilkjpuxvtl.supabase.co', 'sb_publishable_Q8jlBysLLMf2RHoYAGiCNA_BRwDOEbR', {
+        auth: { persistSession: true }
+    });
+
+    async function cargar() {
         const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) window.location.href = "index.html";
+        if (!session) {
+            window.location.href = "index.html";
+            return;
+        }
         const { data } = await supabaseClient.from('children_profiles').select('*').eq('parent_id', session.user.id).single();
         if (data) {
             document.getElementById('welcome').innerText = `¡Hola, ${data.first_name}!`;
             document.getElementById('avatar').innerText = data.avatar_url;
+            document.getElementById('content').style.display = 'block';
         }
     }
-    function activarYJugar() {
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-        window.location.href = 'leccion.html';
-    }
-    init();
+    cargar();
 </script>
 </body>
 </html>
